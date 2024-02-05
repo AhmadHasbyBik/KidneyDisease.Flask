@@ -1,16 +1,13 @@
 {
-    "version" : 2,
-    "builds" : [
-        {
-            "src": "api.py",
-            "use": "@vercel/python",
-            "config": {"runtime":"python3.6"}
-        }
-    ],
-    "routes" : [
-        {
-            "src" : "./(.*)",
-            "dest" : "/"
-        }
+    "functions": {
+      "api": {
+        "handler": "api.py",
+        "runtime": "python3.9"
+      }
+    },
+    "routes": [
+      { "handle": "filesystem" },
+      { "src": "/api/(.*)", "dest": "api.py" }
     ]
-}
+  }
+  
