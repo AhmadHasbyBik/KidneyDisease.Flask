@@ -1,23 +1,23 @@
 {
     "version": 2,
     "builds": [
-        {
-            "src": "api.py",
-            "use": "@vercel/node"
-        }
+      {
+        "src": "api.py",
+        "use": "@vercel/python"
+      }
     ],
     "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "api.py",
-            "methods": [
-                "GET",
-                "POST",
-                "PUT",
-                "PATCH",
-                "OPTIONS",
-                "DELETE"
-            ]
-        }
-    ]
-}
+      {
+        "src": "/api/(.*)",
+        "dest": "api.py",
+        "methods": ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]
+      },
+      {
+        "src": "/(.*)",
+        "dest": "api.py",
+        "methods": ["GET"]
+      }
+    ],
+    "includeFiles": ["api.py", "cnn_model_weights_1.h5", "elm_model_1.pkl"]
+  }
+  
