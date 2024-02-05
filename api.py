@@ -25,7 +25,10 @@ cnn_model = tf.keras.Sequential([
     tf.keras.layers.Dense(256, activation='relu')
 ])
 
-cnn_model.load_weights('cnn_model_weights_1.h5')
+try:
+    cnn_model.load_weights('cnn_model_weights_1.h5')
+except Exception as e:
+    print(f"Error loading CNN model weights: {str(e)}")
 
 # Define the ELM class
 class ELM:
@@ -50,15 +53,22 @@ class ELM:
         return Y_pred
 
 # Load the ELM model
-with open('elm_model_1.pkl', 'rb') as file:
-    elm_model = pickle.load(file)
+try:
+    with open('elm_model_1.pkl', 'rb') as file:
+        elm_model = pickle.load(file)
+except Exception as e:
+    print(f"Error loading ELM model: {str(e)}")
 
 def preprocess_image(image_path):
-    img = Image.open(image_path)
-    img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
-    img_array = tf.keras.preprocessing.image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0) / 255.0
-    return img_array
+    try:
+        img = Image.open(image_path)
+        img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
+        img_array = tf.keras.preprocessing.image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0) / 255.0
+        return img_array
+    except Exception as e:
+        print(f"Error preprocessing image: {str(e)}")
+        return None
 
 @app.route('/', methods=['GET'])
 def home():
@@ -66,40 +76,46 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Check if an image was sent with the request
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image provided'})
+    try:
+        # Check if an image was sent with the request
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image provided'})
 
-    # Get the image file from the request
-    image_file = request.files['image']
+        # Get the image file from the request
+        image_file = request.files['image']
 
-    # Check if the file is empty
-    if image_file.filename == '':
-        return jsonify({'error': 'No image provided'})
+        # Check if the file is empty
+        if image_file.filename == '':
+            return jsonify({'error': 'No image provided'})
 
-    # Preprocess the image
-    img_array = preprocess_image(image_file)
+        # Preprocess the image
+        img_array = preprocess_image(image_file)
 
-    # Get features from the CNN model
-    features_cnn = cnn_model.predict(img_array)
+        if img_array is None:
+            return jsonify({'error': 'Error preprocessing image'})
 
-    # Get prediction from the ELM model
-    prediction_elm = elm_model.predict(features_cnn.reshape(1, -1))
-    predicted_label = np.argmax(prediction_elm)
+        # Get features from the CNN model
+        features_cnn = cnn_model.predict(img_array)
 
-    # Map predicted label to class name
-    predicted_class = class_names[predicted_label]
+        # Get prediction from the ELM model
+        prediction_elm = elm_model.predict(features_cnn.reshape(1, -1))
+        predicted_label = np.argmax(prediction_elm)
 
-    # Calculate and display accuracy
-    accuracy = np.max(prediction_elm) * 100
+        # Map predicted label to class name
+        predicted_class = class_names[predicted_label]
 
-    # Construct the response
-    response = {
-        'prediction': predicted_class,
-        'accuracy': accuracy
-    }
+        # Calculate and display accuracy
+        accuracy = np.max(prediction_elm) * 100
 
-    return jsonify(response)
+        # Construct the response
+        response = {
+            'prediction': predicted_class,
+            'accuracy': accuracy
+        }
+
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({'error': f'An error occurred: {str(e)}'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
