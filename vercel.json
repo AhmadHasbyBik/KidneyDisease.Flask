@@ -1,13 +1,23 @@
 {
-    "functions": {
-      "api": {
-        "handler": "api.py",
-        "runtime": "python3.9"
-      }
-    },
+    "version": 2,
+    "builds": [
+        {
+            "src": "api.py",
+            "use": "@vercel/node"
+        }
+    ],
     "routes": [
-      { "handle": "filesystem" },
-      { "src": "/api/(.*)", "dest": "api.py" }
+        {
+            "src": "/(.*)",
+            "dest": "api.py",
+            "methods": [
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "OPTIONS",
+                "DELETE"
+            ]
+        }
     ]
-  }
-  
+}
