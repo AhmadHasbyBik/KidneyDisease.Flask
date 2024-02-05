@@ -1,22 +1,23 @@
 {
     "version": 2,
     "builds": [
-      {
-        "src": "api/api.py",
-        "use": "@vercel/python"
-      }
+        {
+            "src": "api.py",
+            "use": "@vercel/python"
+        }
     ],
     "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "api/api.py",
-        "methods": ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]
-      },
-      {
-        "src": "/(.*)",
-        "dest": "api/api.py",
-        "methods": ["GET"]
-      }
+        {
+            "src": "/(.*)",
+            "dest": "api.py",
+            "methods": [
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "OPTIONS",
+                "DELETE"
+            ]
+        }
     ]
-  }
-  
+}
