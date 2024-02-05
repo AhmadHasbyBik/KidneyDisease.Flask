@@ -2,22 +2,21 @@
     "version": 2,
     "builds": [
       {
-        "src": "api.py",
+        "src": "api/api.py",
         "use": "@vercel/python"
       }
     ],
     "routes": [
       {
         "src": "/api/(.*)",
-        "dest": "api.py",
+        "dest": "api/api.py",
         "methods": ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]
       },
       {
         "src": "/(.*)",
-        "dest": "api.py",
+        "dest": "api/api.py",
         "methods": ["GET"]
       }
-    ],
-    "includeFiles": ["api.py", "cnn_model_weights_1.h5", "elm_model_1.pkl"]
+    ]
   }
   
