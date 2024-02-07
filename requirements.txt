@@ -2,4 +2,3 @@ flask
 Werkzeug
 tensorflow
 numpy
-pickle
