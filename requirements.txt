@@ -2,3 +2,4 @@ flask
 Werkzeug
 tensorflow
 numpy
+pillow
